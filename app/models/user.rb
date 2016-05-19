@@ -15,8 +15,11 @@ class User < ActiveRecord::Base
   validates :email, presence: true, length: { maximum: 255 }, 
   format: { with: VALID_EMAIL_REGEX }, 
   uniqueness: { case_sensitive: false }
+  # has_secure_password includes a separate presence validation that specifically catches nil passwords
   has_secure_password
-  validates :password, presence: true, length: { minimum: 6 }
+  # with allow_nil: true, nil passwords now bypass the main presence validation but are still caught by has_secure_password
+  # needed for when user wants to update their profile and leave password empty(intended for no change)
+  validates :password, presence: true, length: { minimum: 6 }, allow_nil: true
 
   # Returns the hash digest of the given string.
   def User.digest(string)

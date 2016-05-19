@@ -7,8 +7,7 @@ class SessionsController < ApplicationController
     if user && user.authenticate(params[:session][:password])
       log_in user
       params[:session][:remember_me] == '1' ? remember(user) : forget(user)
-      # Rails automatically converts this to the route for the user’s profile page: user_url(user)
-      redirect_to user
+      redirect_back_or user
     else
       # flash.now, specifically designed for displaying flash messages on rendered pages. 
       # Unlike the contents of flash, the contents of flash.now disappear as soon as there is an additional request
