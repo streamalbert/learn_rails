@@ -45,10 +45,12 @@ class User < ActiveRecord::Base
   end
 
   # Returns true if the given token matches the digest.
-  def authenticated?(remember_token)
-    return false if remember_digest.nil?
+  def authenticated?(attribute, token)
+    # Ruby metaprogramming, send method, which lets us call a method with a name of our choice by “sending a message” to a given object.
+    digest = send("#{attribute}_digest")
+    return false if digest.nil?
     # Explained in tutorial 8.4.2
-    BCrypt::Password.new(remember_digest).is_password?(remember_token)
+    BCrypt::Password.new(digest).is_password?(token)
   end
 
   private
