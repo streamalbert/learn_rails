@@ -3,12 +3,13 @@ class User < ActiveRecord::Base
   # without the remember token, this would allow an attacker with possession 
   # of the encrypted id to log in as the user in perpetuity. 
   # In the present design, an attacker with both cookies can log in as the user only until the user logs out.
-  attr_accessor :remember_token
+  attr_accessor :remember_token, :activation_token
   # Some database adapters use case-sensitive indices, considering the strings “Foo@ExAMPle.CoM” 
   # and “foo@example.com” to be distinct, but our application treats those addresses as the same. 
   # To avoid this incompatibility, we’ll standardize on all lower-case addresses, 
   # converting “Foo@ExAMPle.CoM” to “foo@example.com” before saving it to the database.
-  before_save { self.email = email.downcase }
+  before_save :downcase_email
+  before_create :create_activation_digest
   #same as: validates(:name, presence: true)
   validates :name, presence: true, length: { maximum: 50 }
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
@@ -49,4 +50,21 @@ class User < ActiveRecord::Base
     # Explained in tutorial 8.4.2
     BCrypt::Password.new(remember_digest).is_password?(remember_token)
   end
+
+  private
+
+    # Converts email to all lower-case
+    def downcase_email
+      self.email = email.downcase
+    end
+
+    # Creates and assigns the activation token and digest.
+    def create_activation_digest
+      # before_create callback happens before the user has been created. 
+      # As a result of the callback, when a new user is defined with User.new (as in user signup), 
+      # it will automatically get both activation_token and activation_digest attributes; 
+      # because the latter is associated with a column in the database, it will be written automatically when the user is saved.
+      self.activation_token = User.new_token
+      self.activation_digest = User.digest(activation_token)
+    end
 end
