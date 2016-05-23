@@ -14,6 +14,7 @@ class SessionsController < ApplicationController
         message += "Check your email for the activation link."
         flash[:warning] = message
         redirect_to root_url
+      end
     else
       # flash.now, specifically designed for displaying flash messages on rendered pages. 
       # Unlike the contents of flash, the contents of flash.now disappear as soon as there is an additional request
