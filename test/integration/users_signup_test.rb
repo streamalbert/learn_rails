@@ -26,7 +26,7 @@ class UsersSignupTest < ActionDispatch::IntegrationTest
                                password_confirmation: "123456" }
     end
     assert_equal 1, ActionMailer::Base.deliveries.size
-    # assigns lets us access instance variables in the corresponding action
+    # assigns can be used after RESTful methods to access any objects that are stored as instance variables in actions for use in views.
     user = assigns(:user)
     assert_not user.activated?
     # Try to log in before activation
