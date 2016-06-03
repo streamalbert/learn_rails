@@ -7,6 +7,7 @@ Minitest::Reporters.use!
 class ActiveSupport::TestCase
   # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
   fixtures :all
+  include ApplicationHelper
 
   # Returns true if a test user is logged in.
   # sessions_helper is not available in test, but session method is available. 
