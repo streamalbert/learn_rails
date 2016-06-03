@@ -8,11 +8,11 @@ class User < ActiveRecord::Base
   # and “foo@example.com” to be distinct, but our application treats those addresses as the same. 
   # To avoid this incompatibility, we’ll standardize on all lower-case addresses, 
   # converting “Foo@ExAMPle.CoM” to “foo@example.com” before saving it to the database.
-  before_save :downcase_email
+  before_save { email.downcase! }
   before_create :create_activation_digest
   #same as: validates(:name, presence: true)
   validates :name, presence: true, length: { maximum: 50 }
-  VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
+  VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z/i
   validates :email, presence: true, length: { maximum: 255 }, 
   format: { with: VALID_EMAIL_REGEX }, 
   uniqueness: { case_sensitive: false }
@@ -82,11 +82,6 @@ class User < ActiveRecord::Base
   end
 
   private
-
-    # Converts email to all lower-case
-    def downcase_email
-      self.email = email.downcase
-    end
 
     # Creates and assigns the activation token and digest.
     def create_activation_digest
