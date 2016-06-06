@@ -5,7 +5,7 @@ class UsersController < ApplicationController
 
   def index
     # Page parameter comes from params[:page], which is generated automatically by will_paginate
-    @users = User.paginate(page: params[:page])
+    @users = User.where(activated: true).paginate(page: params[:page])
   end
 
   def new
@@ -14,6 +14,7 @@ class UsersController < ApplicationController
 
   def show
     @user = User.find(params[:id])
+    redirect_to root_url and return unless @user.activated?
   end
 
   def create
