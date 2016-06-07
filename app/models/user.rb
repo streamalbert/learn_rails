@@ -22,7 +22,7 @@ class User < ActiveRecord::Base
   # needed for when user wants to update their profile and leave password empty(intended for no change)
   validates :password, presence: true, length: { minimum: 6 }, allow_nil: true
 
-  has_many :microposts
+  has_many :microposts, dependent: :destroy
 
   # Defining class methods and wrap them within class << self
   # Can also use, User.digest or self.digest to define to methods without the wrap.
