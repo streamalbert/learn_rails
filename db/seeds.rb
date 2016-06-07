@@ -25,3 +25,13 @@ User.create!(name:  "Example User",
                activated: true,
                activated_at: Time.zone.now)
 end
+
+# Adding sample microposts for all the users actually takes a rather long time, 
+# so first we’ll select just the first six users (i.e., the five users with custom Gravatars, 
+# and one with the default Gravatar) using the "take" method
+# The call to order ensures that we find the first six users that were created.
+users = User.order(:created_at).take(6)
+50.times do
+  content = Faker::Lorem.sentence(5)
+  users.each { |user| user.microposts.create!(content: content ) }
+end
