@@ -7,5 +7,8 @@ possibility of manipulating individual microposts at a future date-->
   <span class="timestamp">
     <!--time_ago_in_words refer: ActionView::Helpers::DateHelper-->
     Posted <%= time_ago_in_words(micropost.created_at) %> ago.
+    <% if current_user?(micropost.user) %>
+      <%= link_to "delete", micropost, method: :delete, data: { confirm: "You sure?" } %>
+    <% end %>
   </span>
 </li>
