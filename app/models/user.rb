@@ -93,6 +93,15 @@ class User < ActiveRecord::Base
     reset_sent_at < 2.hours.ago
   end
 
+  # Defines a proto-feed.
+  # See "Following users" for the full implementation.
+  def feed
+    # where using SQL query, using ? is Rails way to escape the query parameters, thus avoiding SQL injection.
+    # here id is not from user input, so it is safe here to just embeded in the query like "user_id = #{id}",
+    # just a good practice to always escape for "where" query. Refer: tutorial 11.3.3
+    Micropost.where("user_id = ?", id)
+  end
+
   private
 
     # Creates and assigns the activation token and digest.
