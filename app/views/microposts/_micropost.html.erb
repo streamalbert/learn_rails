@@ -3,7 +3,11 @@ possibility of manipulating individual microposts at a future date-->
 <li id="micropost-<%= micropost.id %>">
   <%= link_to gravatar_for(micropost.user, size: 50), micropost.user %>
   <span class="user"><%= link_to micropost.user.name, micropost.user %></span>
-  <span class="content"><%= micropost.content %></span>
+  <span class="content">
+    <%= micropost.content %>
+    <!--The use of the picture? boolean method to prevent displaying an image tag when there isn’t an image. This method is created automatically by CarrierWave based on the name of the image attribute.-->
+    <%= image_tag micropost.picture.url if micropost.picture? %>
+  </span>
   <span class="timestamp">
     <!--time_ago_in_words refer: ActionView::Helpers::DateHelper-->
     Posted <%= time_ago_in_words(micropost.created_at) %> ago.
