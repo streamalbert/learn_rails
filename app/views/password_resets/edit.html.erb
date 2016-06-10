@@ -4,7 +4,7 @@
 <div class="row">
   <div class="col-md-6 col-md-offset-3">
     <%= form_for(@user, url: password_reset_path(params[:id])) do |f| %>
-      <%= render 'shared/error_messages' %>
+      <%= render 'shared/error_messages', object: f.object %>
 
       <!--The email will automatically be available in the edit action because of its presence in the link, but after we submit the form its value will be lost. The solution is to use a hidden field to place (but not display) the email on the page, and then submit it along with the rest of the form’s information.-->
       <!--no using f.hidden_field :email, @user.email because it would put it in params[:user][:email]-->

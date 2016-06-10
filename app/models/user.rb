@@ -22,6 +22,8 @@ class User < ActiveRecord::Base
   # needed for when user wants to update their profile and leave password empty(intended for no change)
   validates :password, presence: true, length: { minimum: 6 }, allow_nil: true
 
+  has_many :microposts, dependent: :destroy
+
   # Defining class methods and wrap them within class << self
   # Can also use, User.digest or self.digest to define to methods without the wrap.
   class << self
@@ -89,6 +91,15 @@ class User < ActiveRecord::Base
   # Returns true if a password reset has expired.
   def password_reset_expired?
     reset_sent_at < 2.hours.ago
+  end
+
+  # Defines a proto-feed.
+  # See "Following users" for the full implementation.
+  def feed
+    # where using SQL query, using ? is Rails way to escape the query parameters, thus avoiding SQL injection.
+    # here id is not from user input, so it is safe here to just embeded in the query like "user_id = #{id}",
+    # just a good practice to always escape for "where" query. Refer: tutorial 11.3.3
+    Micropost.where("user_id = ?", id)
   end
 
   private
