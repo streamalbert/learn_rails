@@ -23,6 +23,13 @@ class User < ActiveRecord::Base
   validates :password, presence: true, length: { minimum: 6 }, allow_nil: true
 
   has_many :microposts, dependent: :destroy
+  has_many :active_relationships, class_name: "Relationship", foreign_key: "follower_id", dependent: :destroy
+  # 12.1.4 Using the source parameter, which explicitly tells Rails that the source of the following array is the set of followed ids.
+  has_many :following, through: :active_relationships, source: :followed
+  has_many :passive_relationships, class_name: "Relationship", foreign_key: "followed_id", dependent: :destroy
+  # 12.1.5 we could actually omit the :source key for followers, because in the case of a :followers attribute, 
+  # Rails will singularize “followers” and automatically look for the foreign key follower_id in this case.
+  has_many :followers, through: :passive_relationships, source: :follower
 
   # Defining class methods and wrap them within class << self
   # Can also use, User.digest or self.digest to define to methods without the wrap.
@@ -100,6 +107,21 @@ class User < ActiveRecord::Base
     # here id is not from user input, so it is safe here to just embeded in the query like "user_id = #{id}",
     # just a good practice to always escape for "where" query. Refer: tutorial 11.3.3
     Micropost.where("user_id = ?", id)
+  end
+
+  # Follows a user.
+  def follow(other_user)
+    active_relationships.create(followed_id: other_user.id)
+  end
+
+  # Unfollows a user.
+  def unfollow(other_user)
+    active_relationships.find_by(followed_id: other_user.id).destroy
+  end
+
+  # Returns true if the current user is following the other user.
+  def following?(other_user)
+    following.include?(other_user)
   end
 
   private
