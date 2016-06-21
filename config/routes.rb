@@ -12,10 +12,25 @@ Rails.application.routes.draw do
   get 'login' => 'sessions#new'
   post 'login' => 'sessions#create'
   delete 'logout' => 'sessions#destroy'
-  resources :users
+  resources :users do
+    # The member method arranges for the routes to respond to URLs containing the user id
+    # URLs for following and followers will look like /users/1/following and /users/1/followers
+    # Named route: following_user_path(1), followers_user_path(1)
+    member do 
+      get :following, :followers
+    end
+  end
+  # The other possibility, collection, works without the id
+  # resources :users do
+  #   collection do
+  #     get :tigers
+  #   end
+  # end
+  # Would respond to the URL /users/tigers (presumably to display all the tigers in our application)
   resources :account_activations, only: [:edit]
   resources :password_resets, only: [:new, :create, :edit, :update]
   resources :microposts, only: [:create, :destroy]
+  resources :relationships, only: [:create, :destroy]
 
 # RESTful routes provided by the Users resource
 # HTTP
