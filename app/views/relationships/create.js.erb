@@ -1,0 +1,4 @@
+// html method updates the HTML inside the relevant element with the contents of its argument
+// escape_javascript method is needed to escape out the result when inserting HTML in a JavaScript file.
+$("#follow_form").html("<%= escape_javascript(render('users/unfollow')) %>");
+$("#followers").html('<%= @user.followers.count %>');
