@@ -117,7 +117,7 @@ class User < ActiveRecord::Base
     # drawback: following_ids pulls all the followed users’ ids into memory, and creates an array the full length of the followed users array
     # Micropost.where("user_id IN (?) OR user_id = ?", following_ids, id)
 
-    
+    # 14.3.3 following_ids here is just raw SQL string.
     following_ids = "SELECT followed_id FROM relationships
                      WHERE follower_id = :user_id"
     Micropost.where("user_id IN (#{following_ids})
