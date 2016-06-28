@@ -106,7 +106,22 @@ class User < ActiveRecord::Base
     # where using SQL query, using ? is Rails way to escape the query parameters, thus avoiding SQL injection.
     # here id is not from user input, so it is safe here to just embeded in the query like "user_id = #{id}",
     # just a good practice to always escape for "where" query. Refer: tutorial 11.3.3
-    Micropost.where("user_id = ?", id)
+    # Micropost.where("user_id = ?", id)
+
+    # IN will take a string and test if it contains the user_id.
+    # following_ids is synthesized by Active Record based on the has_many :following association
+    # the result is that we need only append _ids to the association name to get the ids corresponding to the user.following collection.
+    # A string of followed user ids can be: User.first.following_ids.join(', ')
+    # When inserting into an SQL string, the ? interpolation takes care of it and in fact eliminates some database-dependent incompatibilities,
+    # so that we can use following_ids by itself (14.3.2)
+    # drawback: following_ids pulls all the followed users’ ids into memory, and creates an array the full length of the followed users array
+    # Micropost.where("user_id IN (?) OR user_id = ?", following_ids, id)
+
+    
+    following_ids = "SELECT followed_id FROM relationships
+                     WHERE follower_id = :user_id"
+    Micropost.where("user_id IN (#{following_ids})
+                     OR user_id = :user_id", user_id: id)
   end
 
   # Follows a user.
